@@ -11,7 +11,7 @@ contract Ballot {
 
     struct Proposal {
         string name;
-        uint256 voteCount;
+        uint256 voteCount; //How many
     }
 
     address public chairperson;
