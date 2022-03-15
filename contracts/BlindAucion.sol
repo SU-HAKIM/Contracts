@@ -4,6 +4,7 @@ pragma solidity >=0.7.0 <0.9.0;
 contract BlindAuction {
     address payable public beneficiary;
     uint256 public auctionEndTime;
+    address admin;
 
     address public highestBidder;
     uint256 public highestBid;
@@ -23,6 +24,7 @@ contract BlindAuction {
     constructor(uint256 biddingTime, address payable beneficiaryAddress) {
         beneficiary = beneficiaryAddress;
         auctionEndTime = block.timestamp + biddingTime;
+        admin = msg.sender;
     }
 
     function bid() external payable {
@@ -33,7 +35,6 @@ contract BlindAuction {
         if (msg.value <= highestBid) {
             revert BidNotHighEnough(highestBid);
         }
-
         if (highestBid != 0) {
             //check old highest bid is more than 0 so that he can not winthdraw as he wish
             pendingReturns[highestBidder] += highestBid; //old highest bid
@@ -61,6 +62,7 @@ contract BlindAuction {
     }
 
     function auctionEnd() external {
+        require(msg.sender == admin);
         if (block.timestamp < auctionEndTime) revert AuctionNotYetEnded();
 
         if (ended) revert AuctionEndAlreadyCalled();
